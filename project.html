@@ -1,0 +1,1257 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Earnings Website</title>
+  <style>
+    :root {
+      --primary: hsl(4, 100%, 75%);     /* #FF8A80, Light Coral */
+      --secondary: hsl(15, 100%, 78%);  /* #FFAB91, Peach */
+      --background: hsl(0, 0%, 98%);    /* #FAFAFA, Off-White */
+      --accent: hsl(340, 80%, 94%);     /* #FCE4EC, Blush Pink */
+      --text: hsl(200, 19%, 33%);       /* #455A64, Slate Gray */
+      --gold: hsl(45, 75%, 65%);        /* #E8C872, Soft Gold */
+      --error: hsl(0, 70%, 50%);        /* #C62828, Red for errors */
+      --success: hsl(120, 60%, 40%);    /* #388E3C, Green for success */
+      --shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+      --border-radius: 14px;
+      --transition: all 0.3s ease-in-out;
+    }
+
+    /* Dark Mode */
+    [data-theme="dark"] {
+      --primary: hsl(4, 90%, 65%);      /* #F06292, Darker Coral */
+      --secondary: hsl(15, 90%, 68%);   /* #FF8A65, Darker Peach */
+      --background: hsl(200, 20%, 15%); /* #263238, Dark Gray */
+      --accent: hsl(340, 60%, 30%);     /* #AD1457, Dark Blush */
+      --text: hsl(0, 0%, 90%);          /* #E0E0E0, Light Gray */
+      --gold: hsl(45, 75%, 70%);        /* #FFCA28, Brighter Gold */
+    }
+
+    body {
+      font-family: 'Merriweather', Georgia, serif;
+      background: linear-gradient(135deg, var(--accent), var(--background));
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+      line-height: 1.9;
+      transition: var(--transition);
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 20px;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      animation: slideInDown 0.5s ease-in-out;
+    }
+
+    .theme-toggle {
+      background: var(--secondary);
+      color: var(--text);
+      border: none;
+      padding: 10px;
+      border-radius: var(--border-radius);
+      cursor: pointer;
+      font-size: 14px;
+      transition: var(--transition);
+    }
+
+    .theme-toggle:hover {
+      background: var(--gold);
+      transform: scale(1.05);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: var(--background);
+      padding: 50px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      transform: translateY(0);
+      border: 1px solid var(--accent);
+      animation: slideInUp 0.6s ease-in-out;
+    }
+
+    .container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      color: var(--primary);
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    label {
+      display: block;
+      margin-top: 25px;
+      font-weight: 400;
+      color: var(--text);
+      font-size: 17px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 16px;
+      margin-top: 12px;
+      border: 1px solid var(--accent);
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-family: 'Merriweather', Georgia, serif;
+      transition: var(--transition);
+      background: var(--background);
+    }
+
+    input:focus, select:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 8px rgba(232, 200, 114, 0.4);
+    }
+
+    .error-message {
+      color: var(--error);
+      font-size: 14px;
+      margin-top: 5px;
+      display: none;
+    }
+
+    .success .error-message {
+      display: none;
+    }
+
+    .success input, .success select {
+      border-color: var(--success);
+    }
+
+    .error .error-message {
+      display: block;
+    }
+
+    .error input, .error select {
+      border-color: var(--error);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px;
+      width: 100%;
+      margin-top: 30px;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Merriweather', Georgia, serif;
+    }
+
+    button[onclick*="submit"],
+    button[onclick*="Next"],
+    button[onclick*="Submit"],
+    button[onclick*="Search"] {
+      background: var(--primary);
+    }
+
+    button[onclick*="submit"]:hover,
+    button[onclick*="Next"]:hover,
+    button[onclick*="Submit"]:hover,
+    button[onclick*="Search"]:hover {
+      background: var(--gold);
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(232, 200, 114, 0.3);
+    }
+
+    button[onclick*="Back"],
+    button[onclick*="Reset"] {
+      background: var(--secondary);
+      color: var(--text);
+    }
+
+    button[onclick*="Back"]:hover,
+    button[onclick*="Reset"]:hover {
+      background: hsl(15, 100%, 68%);
+      transform: scale(1.05);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    button:active {
+      transform: scale(1);
+      box-shadow: none;
+    }
+
+    .progress-bar {
+      width: 100%;
+      height: 8px;
+      background: var(--accent);
+      border-radius: var(--border-radius);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .progress {
+      height: 100%;
+      background: var(--primary);
+      transition: width 0.3s ease-in-out;
+    }
+
+    .alert-box {
+      margin-top: 30px;
+      background: var(--background);
+      padding: 30px;
+      border: 2px solid var(--gold);
+      border-radius: var(--border-radius);
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    .alert-box p:first-child::before {
+      content: "✅";
+      margin-right: 10px;
+      color: var(--gold);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--background);
+      padding: 35px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      animation: slideIn 0.6s ease-in-out;
+      border: 1px solid var(--accent);
+    }
+
+    .modal-content h3 {
+      color: var(--primary);
+      margin: 0 0 25px;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 24px;
+    }
+
+    .modal-content button {
+      width: auto;
+      padding: 12px 30px;
+      margin-top: 20px;
+    }
+
+    .modal-content button:hover {
+      background: var(--gold);
+      transform: scale(1.05);
+    }
+
+    .loading {
+      display: none;
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 2000;
+    }
+
+    .loading::after {
+      content: '';
+      width: 40px;
+      height: 40px;
+      border: 4px solid var(--gold);
+      border-top: 4px solid var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    .results-container {
+      margin-top: 30px;
+    }
+
+    .result-card {
+      background: var(--background);
+      border: 1px solid var(--accent);
+      border-radius: var(--border-radius);
+      padding: 20px;
+      margin-bottom: 20px;
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      animation: fadeInCard 0.5s ease-in-out;
+    }
+
+    .result-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    .result-card h3 {
+      color: var(--primary);
+      margin: 0 0 10px;
+      font-size: 20px;
+    }
+
+    .result-card p {
+      margin: 5px 0;
+      color: var(--text);
+    }
+
+    .pagination {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .pagination button {
+      width: auto;
+      padding: 10px 20px;
+      aria-label="Pagination button";
+    }
+
+    @keyframes slideInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes fadeInCard {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 30px;
+        padding: 35px;
+      }
+
+      header {
+        font-size: 28px;
+        padding: 20px;
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .theme-toggle {
+        width: 100%;
+      }
+
+      .modal-content {
+        width: 85%;
+        padding: 25px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .container, .result-card, header, .modal-content, button {
+        animation: none;
+        transition: none;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>
+    <span>Welcome to Student Earnings Website</span>
+    <button class="theme-toggle" onclick="toggleTheme()">Toggle Dark Mode</button>
+  </header>
+
+  <!-- Welcome Pop-up Modal -->
+  <div class="modal" id="welcomeModal">
+    <div class="modal-content">
+      <h3>Welcome 🤗</h3>
+      <p>Explore opportunities to earn or find services tailored for students!</p>
+      <button onclick="closeModal('welcomeModal')">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Farewell Pop-up Modal -->
+  <div class="modal" id="farewellModal">
+    <div class="modal-content">
+      <h3>Thank You!</h3>
+      <p>Thank you for reaching us! Come back soon! 😊</p>
+      <button onclick="closeModal('farewellModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Loading Spinner -->
+  <div class="loading" id="loadingSpinner"></div>
+
+  <!-- Welcome Section -->
+  <div class="container" id="welcomeSection">
+    <h2>Choose Your Role</h2>
+    <button type="button" onclick="showWorkerSignup()">Register as a Worker</button>
+    <button type="button" onclick="showCustomerSignup()">Register as a Customer</button>
+    <button type="button" onclick="showSearchSection()">Search Services</button>
+  </div>
+
+  <!-- Search Section -->
+  <div class="container" id="searchSection" style="display:none;">
+    <h2>Search Services</h2>
+    <form id="searchForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="searchCategory">Select Category:</label>
+        <select id="searchCategory" onchange="showSearchSubOptions()" required>
+          <option value="">-- Choose Category --</option>
+          <option value="teach">Teach</option>
+          <option value="parttime">Part-Time Job</option>
+          <option value="sellproducts">Sell Products</option>
+        </select>
+        <span class="error-message">Please select a category</span>
+      </div>
+      <div id="searchSubOptions" style="margin-top:15px;"></div>
+      <button type="button" onclick="searchServices()">Search</button>
+      <button type="button" onclick="showFarewellModal('searchSection', 'welcomeSection')">⬅ Back</button>
+      <button type="button" onclick="resetForm('searchForm')">Reset</button>
+    </form>
+    <div class="results-container" id="searchResults" aria-live="polite"></div>
+    <div class="pagination" id="pagination"></div>
+  </div>
+
+  <!-- Worker Signup Section -->
+  <div class="container" id="workerSignupSection" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress" style="width: 50%;"></div>
+    </div>
+    <h2>Worker Registration</h2>
+    <form id="workerForm" enctype="multipart/form-data" onsubmit="return false;">
+      <div class="form-group">
+        <label for="workerName">Full Name:</label>
+        <input type="text" id="workerName" placeholder="Enter your name" required>
+        <span class="error-message">Please enter a valid name</span>
+      </div>
+      <div class="form-group">
+        <label for="workerEmail">Email ID:</label>
+        <input type="email" id="workerEmail" placeholder="Enter email" required>
+        <span class="error-message">Please enter a valid email address</span>
+      </div>
+      <div class="form-group">
+        <label for="workerPassword">Password:</label>
+        <input type="password" id="workerPassword" placeholder="Create password" required>
+        <span class="error-message">Password must be at least 8 characters</span>
+      </div>
+      <div class="form-group">
+        <label for="workerAge">Age:</label>
+        <input type="number" id="workerAge" placeholder="Enter your age" required>
+        <span class="error-message">You must be at least 18 years old</span>
+      </div>
+      <div class="form-group">
+        <label for="workerEducation">Education Level:</label>
+        <select id="workerEducation" required>
+          <option value="">-- Select Education --</option>
+          <option value="below_10">Below 10th</option>
+          <option value="10_pass">10th Pass</option>
+          <option value="12_pass">10+2 Pass</option>
+          <option value="graduate">Graduate</option>
+          <option value="postgraduate">Postgraduate</option>
+        </select>
+        <span class="error-message">You must have completed at least 10+2 education</span>
+      </div>
+      <div class="form-group">
+        <label for="workerIdProof">ID Proof:</label>
+        <input type="file" id="workerIdProof" name="idProof" accept=".pdf,.jpg,.png" required>
+        <span class="error-message">Please upload a valid ID proof (PDF, JPG, or PNG)</span>
+      </div>
+      <div class="form-group">
+        <label for="workerResume">Upload Resume:</label>
+        <input type="file" id="workerResume" name="resume" accept=".pdf" required>
+        <span class="error-message">Please upload a valid resume (PDF only)</span>
+      </div>
+      <div class="form-group">
+        <label for="workerContact">Contact Information:</label>
+        <input type="text" id="workerContact" placeholder="Enter your phone number" required>
+        <span class="error-message">Please enter a valid 10-digit phone number</span>
+      </div>
+      <button type="button" onclick="submitWorker()">Next →</button>
+      <button type="button" onclick="showFarewellModal('workerSignupSection', 'welcomeSection')">⬅ Back</button>
+      <button type="button" onclick="resetForm('workerForm')">Reset</button>
+    </form>
+  </div>
+
+  <!-- Worker Skills Section -->
+  <div class="container" id="workerSkillsSection" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress" style="width: 100%;"></div>
+    </div>
+    <h2>Select Your Skills</h2>
+    <form id="workerSkillsForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="workerSkillCategory">Select Skill Category:</label>
+        <select id="workerSkillCategory" onchange="showWorkerSubOptions()" required>
+          <option value="">-- Choose Category --</option>
+          <option value="teach">Teach</option>
+          <option value="parttime">Part-Time Job</option>
+          <option value="sellproducts">Sell Products</option>
+        </select>
+        <span class="error-message">Please select a skill category</span>
+      </div>
+      <div id="workerSubOptions" style="margin-top:15px;"></div>
+      <button type="button" onclick="submitWorkerSkills()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('workerSkillsSection', 'workerSignupSection')">⬅ Back</button>
+      <button type="button" onclick="resetForm('workerSkillsForm')">Reset</button>
+    </form>
+  </div>
+
+  <!-- Customer Signup Section -->
+  <div class="container" id="customerSignupSection" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress" style="width: 50%;"></div>
+    </div>
+    <h2>Customer Registration</h2>
+    <form id="customerForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="customerName">Full Name:</label>
+        <input type="text" id="customerName" placeholder="Enter your name" required>
+        <span class="error-message">Please enter a valid name</span>
+      </div>
+      <div class="form-group">
+        <label for="customerEmail">Email ID:</label>
+        <input type="email" id="customerEmail" placeholder="Enter email" required>
+        <span class="error-message">Please enter a valid email address</span>
+      </div>
+      <div class="form-group">
+        <label for="customerAge">Age:</label>
+        <input type="number" id="customerAge" placeholder="Enter your age" required>
+        <span class="error-message">You must be at least 18 years old</span>
+      </div>
+      <div class="form-group">
+        <label for="customerContact">Contact Information:</label>
+        <input type="text" id="customerContact" placeholder="Enter your phone number" required>
+        <span class="error-message">Please enter a valid 10-digit phone number</span>
+      </div>
+      <button type="button" onclick="submitCustomer()">Next →</button>
+      <button type="button" onclick="showFarewellModal('customerSignupSection', 'welcomeSection')">⬅ Back</button>
+      <button type="button" onclick="resetForm('customerForm')">Reset</button>
+    </form>
+  </div>
+
+  <!-- Customer Services Section -->
+  <div class="container" id="customerServicesSection" style="display:none;">
+    <div class="progress-bar">
+      <div class="progress" style="width: 100%;"></div>
+    </div>
+    <h2>Search and Select Services</h2>
+    <form id="customerSearchForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="customerSearchCategory">Search by Category:</label>
+        <select id="customerSearchCategory" onchange="showCustomerSearchSubOptions()">
+          <option value="">-- Choose Category --</option>
+          <option value="teach">Teach</option>
+          <option value="parttime">Part-Time Job</option>
+          <option value="sellproducts">Sell Products</option>
+        </select>
+        <span class="error-message">Please select a category</span>
+      </div>
+      <div id="customerSearchSubOptions" style="margin-top:15px;"></div>
+      <button type="button" onclick="searchCustomerServices()">Search</button>
+      <button type="button" onclick="resetForm('customerSearchForm')">Reset</button>
+    </form>
+    <div class="results-container" id="customerSearchResults" aria-live="polite"></div>
+    <div class="pagination" id="customerSearchPagination"></div>
+    <form id="customerServicesForm" onsubmit="return false;">
+      <div class="form-group">
+        <label for="customerServiceCategory">Select Service Category:</label>
+        <select id="customerServiceCategory" onchange="showCustomerSubOptions()" required>
+          <option value="">-- Choose Category --</option>
+          <option value="teach">Teach</option>
+          <option value="parttime">Part-Time Job</option>
+          <option value="sellproducts">Sell Products</option>
+        </select>
+        <span class="error-message">Please select a service category</span>
+      </div>
+      <div id="customerSubOptions" style="margin-top:15px;"></div>
+      <button type="button" onclick="submitCustomerServices()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('customerServicesSection', 'customerSignupSection')">⬅ Back</button>
+      <button type="button" onclick="resetForm('customerServicesForm')">Reset</button>
+    </form>
+  </div>
+
+  <!-- Alerts Section -->
+  <div class="container" id="alertSection" style="display:none;">
+    <h2>Registration Status</h2>
+    <div id="alerts"></div>
+    <button type="button" onclick="showFarewellModal('alertSection', 'welcomeSection')">⬅ Back to Welcome</button>
+  </div>
+
+  <script>
+    let userEmail = "";
+    let selectedCategory = "";
+    let selectedSub = "";
+    let currentPage = 1;
+    let customerSearchPage = 1;
+    const resultsPerPage = 5;
+
+    // Show welcome modal on page load
+    window.onload = function() {
+      document.getElementById('welcomeModal').style.display = 'flex';
+    };
+
+    // Handle beforeunload event for farewell message
+    window.addEventListener('beforeunload', function(e) {
+      document.getElementById('farewellModal').style.display = 'flex';
+      e.preventDefault();
+      e.returnValue = '';
+    });
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function showFarewellModal(currentSection, nextSection) {
+      document.getElementById('farewellModal').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById(currentSection).style.display = 'none';
+        document.getElementById(nextSection).style.display = 'block';
+        document.getElementById('farewellModal').style.display = 'none';
+      }, 1000);
+    }
+
+    function toggleTheme() {
+      const html = document.documentElement;
+      const currentTheme = html.getAttribute('data-theme');
+      html.setAttribute('data-theme', currentTheme === 'dark' ? 'light' : 'dark');
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validateContact(contact) {
+      const re = /^\d{10}$/;
+      return re.test(contact);
+    }
+
+    function validateFile(fileInput, acceptTypes) {
+      const file = fileInput.files[0];
+      if (!file) return 'No file selected.';
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        return 'File size must be less than 5MB.';
+      }
+      return acceptTypes.includes(file.type) ? '' : 'Invalid file type.';
+    }
+
+    function validateFormField(field, validationFn, errorMessage) {
+      const parent = field.parentElement;
+      const errorElement = parent.querySelector('.error-message');
+      const value = field.value;
+      const isValid = validationFn(value);
+      if (isValid === true || isValid === '') {
+        parent.classList.remove('error');
+        parent.classList.add('success');
+        errorElement.textContent = '';
+      } else {
+        parent.classList.remove('success');
+        parent.classList.add('error');
+        errorElement.textContent = isValid || errorMessage;
+      }
+      return isValid === true || isValid === '';
+    }
+
+    function resetForm(formId) {
+      const form = document.getElementById(formId);
+      form.reset();
+      const groups = form.querySelectorAll('.form-group');
+      groups.forEach(group => {
+        group.classList.remove('error', 'success');
+        group.querySelector('.error-message').textContent = '';
+      });
+      if (formId === 'searchForm') {
+        document.getElementById('searchSubOptions').innerHTML = '';
+        document.getElementById('searchResults').innerHTML = '';
+        document.getElementById('pagination').innerHTML = '';
+      }
+      if (formId === 'customerSearchForm') {
+        document.getElementById('customerSearchSubOptions').innerHTML = '';
+        document.getElementById('customerSearchResults').innerHTML = '';
+        document.getElementById('customerSearchPagination').innerHTML = '';
+      }
+    }
+
+    function showLoading(show) {
+      document.getElementById('loadingSpinner').style.display = show ? 'block' : 'none';
+    }
+
+    function showWorkerSignup() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('workerSignupSection').style.display = 'block';
+      resetForm('workerForm');
+    }
+
+    function showCustomerSignup() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('customerSignupSection').style.display = 'block';
+      resetForm('customerForm');
+    }
+
+    function showSearchSection() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('searchSection').style.display = 'block';
+      resetForm('searchForm');
+    }
+
+    async function submitWorker() {
+      const name = document.getElementById('workerName');
+      const email = document.getElementById('workerEmail');
+      const password = document.getElementById('workerPassword');
+      const age = document.getElementById('workerAge');
+      const education = document.getElementById('workerEducation');
+      const idProof = document.getElementById('workerIdProof');
+      const resume = document.getElementById('workerResume');
+      const contact = document.getElementById('workerContact');
+
+      const isNameValid = validateFormField(name, val => val.trim().length > 0, 'Please enter a valid name');
+      const isEmailValid = validateFormField(email, validateEmail, 'Please enter a valid email address');
+      const isPasswordValid = validateFormField(password, val => val.length >= 8, 'Password must be at least 8 characters');
+      const isAgeValid = validateFormField(age, val => parseInt(val) >= 18, 'You must be at least 18 years old');
+      const isEducationValid = validateFormField(education, val => !['below_10', '10_pass'].includes(val) && val !== '', 'You must have completed at least 10+2 education');
+      const isIdProofValid = validateFormField(idProof, () => validateFile(idProof, ['application/pdf', 'image/jpeg', 'image/png']), 'Please upload a valid ID proof (PDF, JPG, or PNG)');
+      const isResumeValid = validateFormField(resume, () => validateFile(resume, ['application/pdf']), 'Please upload a valid resume (PDF only)');
+      const isContactValid = validateFormField(contact, validateContact, 'Please enter a valid 10-digit phone number');
+
+      if (isNameValid && isEmailValid && isPasswordValid && isAgeValid && isEducationValid && isIdProofValid && isResumeValid && isContactValid) {
+        userEmail = email.value;
+        document.getElementById('workerSignupSection').style.display = 'none';
+        document.getElementById('workerSkillsSection').style.display = 'block';
+        resetForm('workerSkillsForm');
+      }
+    }
+
+    function showWorkerSubOptions() {
+      const category = document.getElementById('workerSkillCategory').value;
+      let options = "";
+      selectedCategory = category;
+
+      if (category === "teach") {
+        options = `
+          <div class="form-group">
+            <label for="workerSubSkill">Select Teaching Skill:</label>
+            <select id="workerSubSkill" required>
+              <option>Study Tuition</option>
+              <option>Art Work</option>
+              <option>Resin Work</option>
+              <option>Photography and Editing</option>
+            </select>
+            <span class="error-message">Please select a teaching skill</span>
+          </div>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <div class="form-group">
+            <label for="workerSubSkill">Select Work Place:</label>
+            <select id="workerSubSkill" required>
+              <option>Cafe</option>
+              <option>Retail Store</option>
+              <option>Library Assistant</option>
+              <option>Freelance Assistant</option>
+            </select>
+            <span class="error-message">Please select a work place</span>
+          </div>
+          <div class="form-group">
+            <label for="workerTiming">Select Timing:</label>
+            <select id="workerTiming" required>
+              <option>Morning</option>
+              <option>Afternoon</option>
+              <option>Evening</option>
+              <option>Flexible</option>
+            </select>
+            <span class="error-message">Please select a timing option</span>
+          </div>
+        `;
+      } else if (category === "sellproducts") {
+        options = `
+          <div class="form-group">
+            <label for="workerSubSkill">Select Product:</label>
+            <select id="workerSubSkill" required>
+              <option>Resin Work</option>
+              <option>Photo Frames</option>
+              <option>Crochet</option>
+              <option>Keychains</option>
+              <option>Others</option>
+            </select>
+            <span class="error-message">Please select a product</span>
+          </div>
+        `;
+      }
+
+      document.getElementById('workerSubOptions').innerHTML = options;
+    }
+
+    async function submitWorkerSkills() {
+      const skillCategory = document.getElementById('workerSkillCategory');
+      const isCategoryValid = validateFormField(skillCategory, val => val !== '', 'Please select a skill category');
+
+      if (!isCategoryValid) return;
+
+      selectedSub = document.getElementById("workerSubSkill")?.value || "";
+      const timing = document.getElementById("workerTiming")?.value || "";
+      const formData = new FormData(document.getElementById('workerForm'));
+      formData.append('skillCategory', selectedCategory);
+      formData.append('subSkill', selectedSub);
+      if (timing) formData.append('timing', timing);
+
+      showLoading(true);
+      try {
+        const response = await fetch('http://localhost:5000/api/worker', {
+          method: 'POST',
+          body: formData,
+        });
+
+        const result = await response.json();
+        showLoading(false);
+        if (response.ok) {
+          document.getElementById('workerSkillsSection').style.display = 'none';
+          document.getElementById('alertSection').style.display = 'block';
+
+          let alertMessage = `
+            <div class="alert-box">
+              <p>✅ Worker registration successful!</p>
+              <p>Selected skill: <b>${selectedCategory} - ${selectedSub}${timing ? ' (' + timing + ')' : ''}</b></p>
+              <p>📧 Further opportunities will be sent to your registered email: <b>${userEmail}</b>.</p>
+            </div>
+          `;
+          document.getElementById("alerts").innerHTML = alertMessage;
+        } else {
+          alert(result.error || 'Registration failed. Please try again.');
+        }
+      } catch (error) {
+        showLoading(false);
+        alert('An error occurred while registering. Please try again.');
+      }
+    }
+
+    async function submitCustomer() {
+      const name = document.getElementById('customerName');
+      const email = document.getElementById('customerEmail');
+      const age = document.getElementById('customerAge');
+      const contact = document.getElementById('customerContact');
+
+      const isNameValid = validateFormField(name, val => val.trim().length > 0, 'Please enter a valid name');
+      const isEmailValid = validateFormField(email, validateEmail, 'Please enter a valid email address');
+      const isAgeValid = validateFormField(age, val => parseInt(val) >= 18, 'You must be at least 18 years old');
+      const isContactValid = validateFormField(contact, validateContact, 'Please enter a valid 10-digit phone number');
+
+      if (isNameValid && isEmailValid && isAgeValid && isContactValid) {
+        userEmail = email.value;
+        document.getElementById('customerSignupSection').style.display = 'none';
+        document.getElementById('customerServicesSection').style.display = 'block';
+        resetForm('customerSearchForm');
+        resetForm('customerServicesForm');
+      }
+    }
+
+    function showCustomerSearchSubOptions() {
+      const category = document.getElementById('customerSearchCategory').value;
+      let options = "";
+
+      if (category === "teach") {
+        options = `
+          <div class="form-group">
+            <label for="customerSearchSubCategory">Select Teaching Skill:</label>
+            <select id="customerSearchSubCategory">
+              <option value="">All Teaching Skills</option>
+              <option>Study Tuition</option>
+              <option>Art Work</option>
+              <option>Resin Work</option>
+              <option>Photography and Editing</option>
+            </select>
+          </div>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <div class="form-group">
+            <label for="customerSearchSubCategory">Select Work Place:</label>
+            <select id="customerSearchSubCategory">
+              <option value="">All Work Places</option>
+              <option>Cafe</option>
+              <option>Retail Store</option>
+              <option>Library Assistant</option>
+              <option>Freelance Assistant</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="customerSearchTiming">Select Timing:</label>
+            <select id="customerSearchTiming">
+              <option value="">All Timings</option>
+              <option>Morning</option>
+              <option>Afternoon</option>
+              <option>Evening</option>
+              <option>Flexible</option>
+            </select>
+          </div>
+        `;
+      } else if (category === "sellproducts") {
+        options = `
+          <div class="form-group">
+            <label for="customerSearchSubCategory">Select Product:</label>
+            <select id="customerSearchSubCategory">
+              <option value="">All Products</option>
+              <option>Resin Work</option>
+              <option>Photo Frames</option>
+              <option>Crochet</option>
+              <option>Keychains</option>
+              <option>Others</option>
+            </select>
+          </div>
+        `;
+      }
+
+      document.getElementById('customerSearchSubOptions').innerHTML = options;
+    }
+
+    function showCustomerSubOptions() {
+      const category = document.getElementById('customerServiceCategory').value;
+      let options = "";
+      selectedCategory = category;
+
+      if (category === "teach") {
+        options = `
+          <div class="form-group">
+            <label for="customerSubService">Select Teaching Skill:</label>
+            <select id="customerSubService" required>
+              <option>Study Tuition</option>
+              <option>Art Work</option>
+              <option>Resin Work</option>
+              <option>Photography and Editing</option>
+            </select>
+            <span class="error-message">Please select a teaching skill</span>
+          </div>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <div class="form-group">
+            <label for="customerSubService">Select Work Place:</label>
+            <select id="customerSubService" required>
+              <option>Cafe</option>
+              <option>Retail Store</option>
+              <option>Library Assistant</option>
+              <option>Freelance Assistant</option>
+            </select>
+            <span class="error-message">Please select a work place</span>
+          </div>
+          <div class="form-group">
+            <label for="customerTiming">Select Timing:</label>
+            <select id="customerTiming" required>
+              <option>Morning</option>
+              <option>Afternoon</option>
+              <option>Evening</option>
+              <option>Flexible</option>
+            </select>
+            <span class="error-message">Please select a timing option</span>
+          </div>
+        `;
+      } else if (category === "sellproducts") {
+        options = `
+          <div class="form-group">
+            <label for="customerSubService">Select Product:</label>
+            <select id="customerSubService" required>
+              <option>Resin Work</option>
+              <option>Photo Frames</option>
+              <option>Crochet</option>
+              <option>Keychains</option>
+              <option>Others</option>
+            </select>
+            <span class="error-message">Please select a product</span>
+          </div>
+        `;
+      }
+
+      document.getElementById('customerSubOptions').innerHTML = options;
+    }
+
+    async function searchCustomerServices(page = 1) {
+      const category = document.getElementById('customerSearchCategory');
+      const subCategory = document.getElementById('customerSearchSubCategory')?.value || '';
+      const timing = document.getElementById('customerSearchTiming')?.value || '';
+      const isCategoryValid = validateFormField(category, val => val !== '', 'Please select a category');
+
+      if (!isCategoryValid) return;
+
+      showLoading(true);
+      try {
+        const queryParams = new URLSearchParams({
+          category: category.value,
+          subCategory,
+          timing,
+          page,
+          limit: resultsPerPage,
+        });
+        const response = await fetch(http://localhost:5000/api/search?${queryParams}, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+        showLoading(false);
+        if (response.ok) {
+          displayCustomerSearchResults(result.results, result.totalPages, page);
+        } else {
+          document.getElementById('customerSearchResults').innerHTML = '<p class="error-message">No results found or an error occurred.</p>';
+        }
+      } catch (error) {
+        showLoading(false);
+        document.getElementById('customerSearchResults').innerHTML = '<p class="error-message">An error occurred while searching. Please try again.</p>';
+      }
+    }
+
+    function displayCustomerSearchResults(results, totalPages, page) {
+      const resultsContainer = document.getElementById('customerSearchResults');
+      resultsContainer.innerHTML = '';
+
+      if (results.length === 0) {
+        resultsContainer.innerHTML = '<p class="error-message">No results found.</p>';
+        return;
+      }
+
+      results.forEach(result => {
+        const card = `
+          <div class="result-card">
+            <h3>${result.name}</h3>
+            <p>Email: ${result.email}</p>
+            <p>Role: ${result.role.charAt(0).toUpperCase() + result.role.slice(1)}</p>
+            <p>Skill: ${result.category} - ${result.subCategory || 'N/A'}${result.timing ? ' (' + result.timing + ')' : ''}</p>
+          </div>
+        `;
+        resultsContainer.innerHTML += card;
+      });
+
+      const pagination = document.getElementById('customerSearchPagination');
+      pagination.innerHTML = '';
+      if (totalPages > 1) {
+        if (page > 1) {
+          pagination.innerHTML += <button onclick="searchCustomerServices(${page - 1})" aria-label="Previous page">Previous</button>;
+        }
+        if (page < totalPages) {
+          pagination.innerHTML += <button onclick="searchCustomerServices(${page + 1})" aria-label="Next page">Next</button>;
+        }
+      }
+    }
+
+    async function submitCustomerServices() {
+      const serviceCategory = document.getElementById('customerServiceCategory');
+      const isCategoryValid = validateFormField(serviceCategory, val => val !== '', 'Please select a service category');
+
+      if (!isCategoryValid) return;
+
+      selectedSub = document.getElementById("customerSubService")?.value || "";
+      const timing = document.getElementById("customerTiming")?.value || "";
+
+      const formData = {
+        name: document.getElementById('customerName').value,
+        email: userEmail,
+        age: document.getElementById('customerAge').value,
+        contact: document.getElementById('customerContact').value,
+        serviceCategory: selectedCategory,
+        subService: selectedSub,
+        timing,
+      };
+
+      showLoading(true);
+      try {
+        const response = await fetch('http://localhost:5000/api/customer', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(formData),
+        });
+
+        const result = await response.json();
+        showLoading(false);
+        if (response.ok) {
+          document.getElementById('customerServicesSection').style.display = 'none';
+          document.getElementById('alertSection').style.display = 'block';
+
+          let alertMessage = `
+            <div class="alert-box">
+              <p>✅ Customer registration successful!</p>
+              <p>Selected service: <b>${selectedCategory} - ${selectedSub}${timing ? ' (' + timing + ')' : ''}</b></p>
+              <p>📧 Service-related updates will be sent to your registered email: <b>${userEmail}</b>.</p>
+            </div>
+          `;
+          document.getElementById("alerts").innerHTML = alertMessage;
+        } else {
+          alert(result.error || 'Registration failed. Please try again.');
+        }
+      } catch (error) {
+        showLoading(false);
+        alert('An error occurred while registering. Please try again.');
+      }
+    }
+
+    function showSearchSubOptions() {
+      const category = document.getElementById('searchCategory').value;
+      let options = "";
+
+      if (category === "teach") {
+        options = `
+          <div class="form-group">
+            <label for="searchSubCategory">Select Teaching Skill:</label>
+            <select id="searchSubCategory">
+              <option value="">All Teaching Skills</option>
+              <option>Study Tuition</option>
+              <option>Art Work</option>
+              <option>Resin Work</option>
+              <option>Photography and Editing</option>
+            </select>
+          </div>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <div class="form-group">
+            <label for="searchSubCategory">Select Work Place:</label>
+            <select id="searchSubCategory">
+              <option value="">All Work Places</option>
+              <option>Cafe</option>
+              <option>Retail Store</option>
+              <option>Library Assistant</option>
+              <option>Freelance Assistant</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="searchTiming">Select Timing:</label>
+            <select id="searchTiming">
+              <option value="">All Timings</option>
+              <option>Morning</option>
+              <option>Afternoon</option>
+              <option>Evening</option>
+              <option>Flexible</option>
+            </select>
+          </div>
+        `;
+      } else if (category === "sellproducts") {
+        options = `
+          <div class="form-group">
+            <label for="searchSubCategory">Select Product:</label>
+            <select id="searchSubCategory">
+              <option value="">All Products</option>
+              <option>Resin Work</option>
+              <option>Photo Frames</option>
+              <option>Crochet</option>
+              <option>Keychains</option>
+              <option>Others</option>
+            </select>
+          </div>
+        `;
+      }
+
+      document.getElementById('searchSubOptions').innerHTML = options;
+    }
+
+    async function searchServices(page = 1) {
+      const category = document.getElementById('searchCategory');
+      const subCategory = document.getElementById('searchSubCategory')?.value || '';
+      const timing = document.getElementById('searchTiming')?.value || '';
+      const isCategoryValid = validateFormField(category, val => val !== '', 'Please select a category');
+
+      if (!isCategoryValid) return;
+
+      showLoading(true);
+      try {
+        const queryParams = new URLSearchParams({
+          category: category.value,
+          subCategory,
+          timing,
+          page,
+          limit: resultsPerPage,
+        });
+        const response = await fetch(http://localhost:5000/api/search?${queryParams}, {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+        });
+
+        const result = await response.json();
+        showLoading(false);
+        if (response.ok) {
+          displaySearchResults(result.results, result.totalPages, page);
+        } else {
+          document.getElementById('searchResults').innerHTML = '<p class="error-message">No results found or an error occurred.</p>';
+        }
+      } catch (error) {
+        showLoading(false);
+        document.getElementById('searchResults').innerHTML = '<p class="error-message">An error occurred while searching. Please try again.</p>';
+      }
+    }
+
+    function displaySearchResults(results, totalPages, page) {
+      const resultsContainer = document.getElementById('searchResults');
+      resultsContainer.innerHTML = '';
+
+      if (results.length === 0) {
+        resultsContainer.innerHTML = '<p class="error-message">No results found.</p>';
+        return;
+      }
+
+      results.forEach(result => {
+        const card = `
+          <div class="result-card">
+            <h3>${result.name}</h3>
+            <p>Email: ${result.email}</p>
+            <p>Role: ${result.role.charAt(0).toUpperCase() + result.role.slice(1)}</p>
+            <p>Skill: ${result.category} - ${result.subCategory || 'N/A'}${result.timing ? ' (' + result.timing + ')' : ''}</p>
+          </div>
+        `;
+        resultsContainer.innerHTML += card;
+      });
+
+      const pagination = document.getElementById('pagination');
+      pagination.innerHTML = '';
+      if (totalPages > 1) {
+        if (page > 1) {
+          pagination.innerHTML += <button onclick="searchServices(${page - 1})" aria-label="Previous page">Previous</button>;
+        }
+        if (page < totalPages) {
+          pagination.innerHTML += <button onclick="searchServices(${page + 1})" aria-label="Next page">Next</button>;
+        }
+      }
+    }
+  </script>
+</body>
+</html>
