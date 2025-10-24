@@ -1,0 +1,812 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Student Earnings Website</title>
+  <style>
+    :root {
+      --primary: hsl(4, 100%, 75%);     /* #FF8A80, Light Coral */
+      --secondary: hsl(15, 100%, 78%);  /* #FFAB91, Peach */
+      --background: hsl(0, 0%, 98%);    /* #FAFAFA, Off-White */
+      --accent: hsl(340, 80%, 94%);     /* #FCE4EC, Blush Pink */
+      --text: hsl(200, 19%, 33%);       /* #455A64, Slate Gray */
+      --gold: hsl(45, 75%, 65%);        /* #E8C872, Soft Gold */
+      --shadow: 0 8px 16px rgba(0, 0, 0, 0.06);
+      --border-radius: 14px;
+      --transition: all 0.5s ease-in-out;
+    }
+
+    body {
+      font-family: 'Merriweather', Georgia, serif;
+      background: linear-gradient(135deg, var(--accent), var(--background));
+      margin: 0;
+      padding: 0;
+      color: var(--text);
+      line-height: 1.9;
+    }
+
+    header {
+      background: var(--primary);
+      color: white;
+      text-align: center;
+      padding: 30px;
+      font-size: 32px;
+      font-weight: 400;
+      letter-spacing: 2px;
+      box-shadow: var(--shadow);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 50px auto;
+      background: var(--background);
+      padding: 50px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      transition: var(--transition);
+      transform: translateY(0);
+      border: 1px solid var(--accent);
+    }
+
+    .container:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.08);
+    }
+
+    h2 {
+      color: var(--primary);
+      font-size: 28px;
+      margin-bottom: 30px;
+      text-align: center;
+      font-weight: 400;
+      font-style: italic;
+    }
+
+    label {
+      display: block;
+      margin-top: 25px;
+      font-weight: 400;
+      color: var(--text);
+      font-size: 17px;
+    }
+
+    input, select, textarea {
+      width: 100%;
+      padding: 16px;
+      margin-top: 12px;
+      border: 1px solid var(--accent);
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-family: 'Merriweather', Georgia, serif;
+      transition: var(--transition);
+      background: #FFFFFF;
+    }
+
+    input:focus, select:focus, textarea:focus {
+      outline: none;
+      border-color: var(--gold);
+      box-shadow: 0 0 8px rgba(232, 200, 114, 0.4);
+    }
+
+    button {
+      background: var(--primary);
+      color: white;
+      border: none;
+      padding: 16px;
+      width: 100%;
+      margin-top: 30px;
+      border-radius: var(--border-radius);
+      font-size: 16px;
+      font-weight: 400;
+      cursor: pointer;
+      transition: var(--transition);
+      font-family: 'Merriweather', Georgia, serif;
+    }
+
+    button[onclick*="submit"],
+    button[onclick*="Next"],
+    button[onclick*="Submit"] {
+      background: var(--primary);
+    }
+
+    button[onclick*="submit"]:hover,
+    button[onclick*="Next"]:hover,
+    button[onclick*="Submit"]:hover {
+      background: var(--gold);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(232, 200, 114, 0.3);
+    }
+
+    button[onclick*="Back"] {
+      background: var(--secondary);
+      color: var(--text);
+    }
+
+    button[onclick*="Back"]:hover {
+      background: lab(73.02% 32.84 8.56);
+      transform: translateY(-2px);
+      box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    button:active {
+      transform: translateY(0);
+      box-shadow: none;
+    }
+
+    .alert-box {
+      margin-top: 30px;
+      background: #fb9e9e;
+      padding: 30px;
+      border: 2px solid var(--gold);
+      border-radius: var(--border-radius);
+      animation: fadeIn 0.7s ease-in-out;
+    }
+
+    .alert-box p:first-child::before {
+      content: "✅";
+      margin-right: 10px;
+      color: var(--gold);
+    }
+
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.25);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .modal-content {
+      background: var(--background);
+      padding: 35px;
+      border-radius: var(--border-radius);
+      box-shadow: var(--shadow);
+      text-align: center;
+      max-width: 500px;
+      width: 90%;
+      animation: slideIn 0.6s ease-in-out;
+      border: 1px solid var(--accent);
+    }
+
+    .modal-content h3 {
+      color: var(--primary);
+      margin: 0 0 25px;
+      font-weight: 400;
+      font-style: italic;
+      font-size: 24px;
+    }
+
+    .modal-content button {
+      width: auto;
+      padding: 12px 30px;
+      margin-top: 20px;
+    }
+
+    .modal-content button:hover {
+      background: var(--gold);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes slideIn {
+      from { opacity: 0; transform: scale(0.9); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        margin: 30px;
+        padding: 35px;
+      }
+
+      header {
+        font-size: 28px;
+        padding: 20px;
+      }
+
+      .modal-content {
+        width: 85%;
+        padding: 25px;
+      }
+    }
+  </style>
+  <link href="https://fonts.googleapis.com/css2?family=Merriweather:wght@400;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <header>Welcome to Student Earnings Website</header>
+
+  <!-- Welcome Pop-up Modal -->
+  <div class="modal" id="welcomeModal">
+    <div class="modal-content">
+      <h3>Welcome 🤗</h3>
+      <p>Explore opportunities to earn or find services tailored for students!</p>
+      <button onclick="closeModal('welcomeModal')">Get Started</button>
+    </div>
+  </div>
+
+  <!-- Farewell Pop-up Modal -->
+  <div class="modal" id="farewellModal">
+    <div class="modal-content">
+      <h3>Thank You!</h3>
+      <p>Thank you for reaching us! Come back soon! 😊</p>
+      <button onclick="closeModal('farewellModal')">Close</button>
+    </div>
+  </div>
+
+  <!-- Welcome Section -->
+  <div class="container" id="welcomeSection">
+    <h2>Choose Your Role</h2>
+    <button type="button" onclick="showWorkerSignup()">Register as a Worker</button>
+    <button type="button" onclick="showCustomerSignup()">Register as a Customer</button>
+    <button type="button" onclick="showRequestHelp()">Request Help</button>
+    <button type="button" onclick="showRequestClient()">Request a Client</button>
+  </div>
+
+  <!-- Worker Signup Section -->
+  <div class="container" id="workerSignupSection" style="display:none;">
+    <h2>Worker Registration</h2>
+    <form id="workerSignupForm" onsubmit="return false;">
+      <label for="workerName">Full Name:</label>
+      <input type="text" id="workerName" name="name" placeholder="Enter your name" required>
+
+      <label for="workerEmail">Email ID:</label>
+      <input type="email" id="workerEmail" name="email" placeholder="Enter email" required>
+
+      <label for="workerPassword">Password:</label>
+      <input type="password" id="workerPassword" name="password" placeholder="Create password" required>
+
+      <label for="workerAge">Age:</label>
+      <input type="number" id="workerAge" name="age" placeholder="Enter your age" required>
+
+      <label for="workerEducation">Education Level:</label>
+      <select id="workerEducation" name="education" required>
+        <option value="">-- Select Education --</option>
+        <option value="below_10">Below 10th</option>
+        <option value="10_pass">10th Pass</option>
+        <option value="12_pass">10+2 Pass</option>
+        <option value="graduate">Graduate</option>
+        <option value="postgraduate">Postgraduate</option>
+      </select>
+
+      <label for="workerIdProof">ID Proof:</label>
+      <input type="file" id="workerIdProof" name="id_proof" accept=".pdf,.jpg,.png" required>
+
+      <label for="workerResume">Upload Resume:</label>
+      <input type="file" id="workerResume" name="resume" accept=".pdf" required>
+
+      <label for="workerContact">Contact Information:</label>
+      <input type="text" id="workerContact" name="contact" placeholder="Enter your phone number" required>
+
+      <button type="button" onclick="submitWorker()">Next →</button>
+      <button type="button" onclick="showFarewellModal('workerSignupSection', 'welcomeSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Worker Skills Section -->
+  <div class="container" id="workerSkillsSection" style="display:none;">
+    <h2>Select Your Skills</h2>
+    <form id="workerSkillsForm" onsubmit="return false;">
+      <label for="workerSkillCategory">Select Skill Category:</label>
+      <select id="workerSkillCategory" name="skill_category" onchange="showWorkerSubOptions()">
+        <option value="">-- Choose Category --</option>
+        <option value="teaching">Teaching</option>
+        <option value="parttime">Part-Time Jobs</option>
+        <option value="events">Event Management</option>
+      </select>
+
+      <div id="workerSubOptions" style="margin-top:15px;"></div>
+
+      <button type="button" onclick="submitWorkerSkills()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('workerSkillsSection', 'workerSignupSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Customer Signup Section -->
+  <div class="container" id="customerSignupSection" style="display:none;">
+    <h2>Customer Registration</h2>
+    <form id="customerSignupForm" onsubmit="return false;">
+      <label for="customerName">Full Name:</label>
+      <input type="text" id="customerName" name="name" placeholder="Enter your name" required>
+
+      <label for="customerEmail">Email ID:</label>
+      <input type="email" id="customerEmail" name="email" placeholder="Enter email" required>
+
+      <label for="customerAge">Age:</label>
+      <input type="number" id="customerAge" name="age" placeholder="Enter your age" required>
+
+      <label for="customerContact">Contact Information:</label>
+      <input type="text" id="customerContact" name="contact" placeholder="Enter your phone number" required>
+
+      <button type="button" onclick="submitCustomer()">Next →</button>
+      <button type="button" onclick="showFarewellModal('customerSignupSection', 'welcomeSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Customer Services Section -->
+  <div class="container" id="customerServicesSection" style="display:none;">
+    <h2>Select Services You Want</h2>
+    <form id="customerServicesForm" onsubmit="return false;">
+      <label for="customerServiceCategory">Select Service Category:</label>
+      <select id="customerServiceCategory" name="service_category" onchange="showCustomerSubOptions()">
+        <option value="">-- Choose Category --</option>
+        <option value="teaching">Teaching</option>
+        <option value="parttime">Part-Time Jobs</option>
+        <option value="events">Event Management</option>
+      </select>
+
+      <div id="customerSubOptions" style="margin-top:15px;"></div>
+
+      <button type="button" onclick="submitCustomerServices()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('customerServicesSection', 'customerSignupSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Request Help Section -->
+  <div class="container" id="requestHelpSection" style="display:none;">
+    <h2>Request Help</h2>
+    <form id="requestHelpForm" onsubmit="return false;">
+      <label for="customerEmailHelp">Your Email:</label>
+      <input type="email" id="customerEmailHelp" name="customer_email" placeholder="Enter your email" required>
+
+      <label for="helpMessage">Describe Your Issue:</label>
+      <textarea id="helpMessage" name="message" placeholder="Describe your issue" required></textarea>
+
+      <button type="button" onclick="submitHelpRequest()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('requestHelpSection', 'welcomeSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Request Client Section -->
+  <div class="container" id="requestClientSection" style="display:none;">
+    <h2>Request a Client</h2>
+    <form id="requestClientForm" onsubmit="return false;">
+      <label for="customerEmailClient">Your Email:</label>
+      <input type="email" id="customerEmailClient" name="customer_email" placeholder="Enter your email" required>
+
+      <label for="clientEmail">Client Email:</label>
+      <input type="email" id="clientEmail" name="client_email" placeholder="Enter client email" required>
+
+      <label for="jobDescription">Job Description:</label>
+      <textarea id="jobDescription" name="job_description" placeholder="Describe the job" required></textarea>
+
+      <button type="button" onclick="submitClientRequest()">Submit →</button>
+      <button type="button" onclick="showFarewellModal('requestClientSection', 'welcomeSection')">⬅ Back</button>
+    </form>
+  </div>
+
+  <!-- Alerts Section -->
+  <div class="container" id="alertSection" style="display:none;">
+    <h2>Status</h2>
+    <div id="alerts"></div>
+    <button type="button" onclick="showFarewellModal('alertSection', 'welcomeSection')">⬅ Back to Welcome</button>
+  </div>
+
+  <script>
+    let userEmail = "";
+    let selectedCategory = "";
+    let selectedSub = "";
+
+    // Show welcome modal on page load
+    window.onload = function() {
+      document.getElementById('welcomeModal').style.display = 'flex';
+    };
+
+    // Handle beforeunload event for farewell message
+    window.addEventListener('beforeunload', function(e) {
+      document.getElementById('farewellModal').style.display = 'flex';
+      e.preventDefault();
+      e.returnValue = '';
+    });
+
+    function closeModal(modalId) {
+      document.getElementById(modalId).style.display = 'none';
+    }
+
+    function showFarewellModal(currentSection, nextSection) {
+      document.getElementById('farewellModal').style.display = 'flex';
+      setTimeout(() => {
+        document.getElementById(currentSection).style.display = 'none';
+        document.getElementById(nextSection).style.display = 'block';
+        document.getElementById('farewellModal').style.display = 'none';
+      }, 1000);
+    }
+
+    function validateEmail(email) {
+      const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      return re.test(email);
+    }
+
+    function validateContact(contact) {
+      const re = /^\d{10}$/;
+      return re.test(contact);
+    }
+
+    function validateFile(fileInput, acceptTypes) {
+      const file = fileInput.files[0];
+      if (!file) return false;
+      const maxSize = 5 * 1024 * 1024; // 5MB
+      if (file.size > maxSize) {
+        alert("File size must be less than 5MB.");
+        return false;
+      }
+      return acceptTypes.includes(file.type);
+    }
+
+    function showWorkerSignup() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('workerSignupSection').style.display = 'block';
+    }
+
+    function showCustomerSignup() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('customerSignupSection').style.display = 'block';
+    }
+
+    function showRequestHelp() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('requestHelpSection').style.display = 'block';
+    }
+
+    function showRequestClient() {
+      document.getElementById('welcomeSection').style.display = 'none';
+      document.getElementById('requestClientSection').style.display = 'block';
+    }
+
+    function submitWorker() {
+      userEmail = document.getElementById('workerEmail').value;
+      const name = document.getElementById('workerName').value;
+      const contact = document.getElementById('workerContact').value;
+      const age = document.getElementById('workerAge').value;
+      const education = document.getElementById('workerEducation').value;
+      const idProof = document.getElementById('workerIdProof');
+      const resume = document.getElementById('workerResume');
+      const password = document.getElementById('workerPassword').value;
+
+      if (!userEmail || !name || !contact || !age || !education || !password) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      if (!validateEmail(userEmail)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      if (!validateContact(contact)) {
+        alert("Please enter a valid 10-digit phone number.");
+        return;
+      }
+
+      if (parseInt(age) < 18) {
+        alert("You must be at least 18 years old to register as a worker.");
+        return;
+      }
+
+      if (education === "below_10" || education === "10_pass") {
+        alert("You must have completed at least 10+2 education to register as a worker.");
+        return;
+      }
+
+      if (!validateFile(idProof, ['application/pdf', 'image/jpeg', 'image/png'])) {
+        alert("Please upload a valid ID proof (PDF, JPG, or PNG).");
+        return;
+      }
+
+      if (!validateFile(resume, ['application/pdf'])) {
+        alert("Please upload a valid resume (PDF only).");
+        return;
+      }
+
+      if (password.length < 8) {
+        alert("Password must be at least 8 characters long.");
+        return;
+      }
+
+      document.getElementById('workerSignupSection').style.display = 'none';
+      document.getElementById('workerSkillsSection').style.display = 'block';
+    }
+
+    function showWorkerSubOptions() {
+      const category = document.getElementById('workerSkillCategory').value;
+      let options = "";
+
+      if (category === "teaching") {
+        options = `
+          <label for="workerSubSkill">Select Subject:</label>
+          <select id="workerSubSkill" name="skill_subcategory">
+            <option>Biology</option>
+            <option>Physics</option>
+            <option>Chemistry</option>
+            <option>Story Teller</option>
+            <option>Maths</option>
+            <option>Aptitude</option>
+            <option>English</option>
+            <option>History</option>
+          </select>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <label for="workerSubSkill">Select Job Type:</label>
+          <select id="workerSubSkill" name="skill_subcategory">
+            <option>Delivery Boy</option>
+            <option>Mehndi Designer</option>
+            <option>Event Contributor</option>
+            <option>Photoshoot Assistant</option>
+            <option>Tutor Assistant</option>
+            <option>Data Entry</option>
+          </select>
+        `;
+      } else if (category === "events") {
+        options = `
+          <label for="workerSubSkill">Select Event Type:</label>
+          <select id="workerSubSkill" name="skill_subcategory">
+            <option>College Fest</option>
+            <option>Functions</option>
+            <option>Marriage</option>
+            <option>Birthday Party</option>
+            <option>Corporate Event</option>
+            <option>Festival Celebration</option>
+          </select>
+        `;
+      }
+
+      selectedCategory = category;
+      document.getElementById('workerSubOptions').innerHTML = options;
+    }
+
+    function submitWorkerSkills() {
+      if (selectedCategory === "") {
+        alert("Please select a skill category!");
+        return;
+      }
+
+      selectedSub = document.getElementById("workerSubSkill")?.value || "";
+      const formData = new FormData(document.getElementById('workerSignupForm'));
+      formData.append('skill_category', selectedCategory);
+      formData.append('skill_subcategory', selectedSub);
+
+      fetch('http://127.0.0.1:5000/register_worker', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(HTTP error! Status: ${res.status});
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('workerSkillsSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        let alertMessage = `
+          <div class="alert-box">
+            <p>✅ ${data.message}</p>
+            <p>📧 Further opportunities will be sent to your registered email: <b>${userEmail}</b>.</p>
+          </div>
+        `;
+        if (data.status === 'error') {
+          alertMessage = `
+            <div class="alert-box" style="background:#ffcccc;">
+              <p>❌ ${data.message}</p>
+            </div>
+          `;
+        }
+        document.getElementById("alerts").innerHTML = alertMessage;
+      })
+      .catch(err => {
+        document.getElementById('workerSkillsSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        document.getElementById("alerts").innerHTML = `
+          <div class="alert-box" style="background:#ffcccc;">
+            <p>❌ Error: ${err.message}</p>
+          </div>
+        `;
+      });
+    }
+
+    function submitCustomer() {
+      userEmail = document.getElementById('customerEmail').value;
+      const name = document.getElementById('customerName').value;
+      const age = document.getElementById('customerAge').value;
+      const contact = document.getElementById('customerContact').value;
+
+      if (!userEmail || !name || !age || !contact) {
+        alert("Please fill in all required fields.");
+        return;
+      }
+
+      if (!validateEmail(userEmail)) {
+        alert("Please enter a valid email address.");
+        return;
+      }
+
+      if (!validateContact(contact)) {
+        alert("Please enter a valid 10-digit phone number.");
+        return;
+      }
+
+      document.getElementById('customerSignupSection').style.display = 'none';
+      document.getElementById('customerServicesSection').style.display = 'block';
+    }
+
+    function showCustomerSubOptions() {
+      const category = document.getElementById('customerServiceCategory').value;
+      let options = "";
+
+      if (category === "teaching") {
+        options = `
+          <label for="customerSubService">Select Subject:</label>
+          <select id="customerSubService" name="service_subcategory">
+            <option>Biology</option>
+            <option>Physics</option>
+            <option>Chemistry</option>
+            <option>Story Teller</option>
+            <option>Maths</option>
+            <option>Aptitude</option>
+            <option>English</option>
+            <option>History</option>
+          </select>
+        `;
+      } else if (category === "parttime") {
+        options = `
+          <label for="customerSubService">Select Job Type:</label>
+          <select id="customerSubService" name="service_subcategory">
+            <option>Delivery Boy</option>
+            <option>Mehndi Designer</option>
+            <option>Event Contributor</option>
+            <option>Photoshoot Assistant</option>
+            <option>Tutor Assistant</option>
+            <option>Data Entry</option>
+          </select>
+        `;
+      } else if (category === "events") {
+        options = `
+          <label for="customerSubService">Select Event Type:</label>
+          <select id="customerSubService" name="service_subcategory">
+            <option>College Fest</option>
+            <option>Functions</option>
+            <option>Marriage</option>
+            <option>Birthday Party</option>
+            <option>Corporate Event</option>
+            <option>Festival Celebration</option>
+          </select>
+        `;
+      }
+
+      selectedCategory = category;
+      document.getElementById('customerSubOptions').innerHTML = options;
+    }
+
+    function submitCustomerServices() {
+      if (selectedCategory === "") {
+        alert("Please select a service category!");
+        return;
+      }
+
+      selectedSub = document.getElementById("customerSubService")?.value || "";
+      const formData = new FormData(document.getElementById('customerSignupForm'));
+      formData.append('service_category', selectedCategory);
+      formData.append('service_subcategory', selectedSub);
+
+      fetch('http://127.0.0.1:5000/register_customer', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(HTTP error! Status: ${res.status});
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('customerServicesSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        let alertMessage = `
+          <div class="alert-box">
+            <p>✅ ${data.message}</p>
+            <p>📧 Service-related updates will be sent to your registered email: <b>${userEmail}</b>.</p>
+          </div>
+        `;
+        if (data.status === 'error') {
+          alertMessage = `
+            <div class="alert-box" style="background:#ffcccc;">
+              <p>❌ ${data.message}</p>
+            </div>
+          `;
+        }
+        document.getElementById("alerts").innerHTML = alertMessage;
+      })
+      .catch(err => {
+        document.getElementById('customerServicesSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        document.getElementById("alerts").innerHTML = `
+          <div class="alert-box" style="background:#ffcccc;">
+            <p>❌ Error: ${err.message}</p>
+          </div>
+        `;
+      });
+    }
+
+    function submitHelpRequest() {
+      const formData = new FormData(document.getElementById('requestHelpForm'));
+      fetch('http://127.0.0.1:5000/request_help', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(HTTP error! Status: ${res.status});
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('requestHelpSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        let alertMessage = `
+          <div class="alert-box">
+            <p>✅ ${data.message}</p>
+            <p>📧 A support team member will contact you at: <b>${document.getElementById('customerEmailHelp').value}</b>.</p>
+          </div>
+        `;
+        if (data.status === 'error') {
+          alertMessage = `
+            <div class="alert-box" style="background:#ffcccc;">
+              <p>❌ ${data.message}</p>
+            </div>
+          `;
+        }
+        document.getElementById("alerts").innerHTML = alertMessage;
+      })
+      .catch(err => {
+        document.getElementById('requestHelpSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        document.getElementById("alerts").innerHTML = `
+          <div class="alert-box" style="background:#ffcccc;">
+            <p>❌ Error: ${err.message}</p>
+          </div>
+        `;
+      });
+    }
+
+    function submitClientRequest() {
+      const formData = new FormData(document.getElementById('requestClientForm'));
+      fetch('http://127.0.0.1:5000/request_client', {
+        method: 'POST',
+        body: formData
+      })
+      .then(res => {
+        if (!res.ok) throw new Error(HTTP error! Status: ${res.status});
+        return res.json();
+      })
+      .then(data => {
+        document.getElementById('requestClientSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        let alertMessage = `
+          <div class="alert-box">
+            <p>✅ ${data.message}</p>
+            <p>📧 You and the client will receive updates at: <b>${document.getElementById('customerEmailClient').value}</b>.</p>
+          </div>
+        `;
+        if (data.status === 'error') {
+          alertMessage = `
+            <div class="alert-box" style="background:#ffcccc;">
+              <p>❌ ${data.message}</p>
+            </div>
+          `;
+        }
+        document.getElementById("alerts").innerHTML = alertMessage;
+      })
+      .catch(err => {
+        document.getElementById('requestClientSection').style.display = 'none';
+        document.getElementById('alertSection').style.display = 'block';
+        document.getElementById("alerts").innerHTML = `
+          <div class="alert-box" style="background:#ffcccc;">
+            <p>❌ Error: ${err.message}</p>
+          </div>
+        `;
+      });
+    }
+  </script>
+</body>
+</html>
